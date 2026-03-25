@@ -23,11 +23,11 @@ HOW TO INSTALL AND RUN THE PROJECT LOCALLY:
 
     WINDOWS:
 
-            .\venv\Scripts\activate
+        .\venv\Scripts\activate
 
     MAC/LINUX:
-    
-            source venv/bin/activate
+
+        source venv/bin/activate
 
     Now you should see a (venv) at the beginning of your terminal line. If you don't then make sure that you did these commands using command prompt and not powershell
 
