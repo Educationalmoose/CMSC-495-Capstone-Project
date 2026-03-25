@@ -46,19 +46,21 @@ HOW TO INSTALL AND RUN THE PROJECT LOCALLY:
         set FLASK_APP=main.py
         flask run
 
-7) To test the python demo, open a new terminal in the folder's path and type the following command:
 
-        python fake_client.py
-
-    You can experiment by changing the values in the matrix and seeing what the result is each time you run it.
-
-8) To test the java demo, you can either compile the java file and run it in the console, or just use the run button inside the IDE.
+7) To test the java demo, you can either compile the java file and run it in the console, or just use the run button inside the IDE.
 
     To compile:
 
         javac FakeClient.java
         java FakeClient
 
-    If java doesn't recognize the Gson jar file, then try locating your IDE's external library importer and manually add the jar as an external library. You will have it downloaded in your /lib folder already
+8) To test the current version (as of March 25, 2026) you will need to place a .png image in the same folder as the java script and type the name when it asks for it ex. "dog.png"
+
+9) If you install any external libraries in java or python, make sure you run this command before posting to github
+
+        pip freeze > requirements.txt
+    
+    This will update the requirements list that we will need to be synced all the time to run smoothly.
+
 
 
