@@ -11,18 +11,22 @@ HOW TO INSTALL AND RUN THE PROJECT LOCALLY:
 3) Create the virtual environment by opening the terminal in your IDE and using the command:
 
     WINDOWS:
-            python -m venv venv
+
+        python -m venv venv
 
     MAC/LINUX:
-            python3 -m venv venv
+
+        python3 -m venv venv
 
 
 4) Activate the virtual environement using the command:
 
     WINDOWS:
+
             .\venv\Scripts\activate
 
     MAC/LINUX:
+    
             source venv/bin/activate
 
     Now you should see a (venv) at the beginning of your terminal line. If you don't then make sure that you did these commands using command prompt and not powershell
