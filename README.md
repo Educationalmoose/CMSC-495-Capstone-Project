@@ -19,7 +19,7 @@ HOW TO INSTALL AND RUN THE PROJECT LOCALLY:
         python3 -m venv venv
 
 
-4) Activate the virtual environement using the command:
+4) Activate the virtual environement using the command (in command prompt, not powershell):
 
     WINDOWS:
 
@@ -29,7 +29,7 @@ HOW TO INSTALL AND RUN THE PROJECT LOCALLY:
 
         source venv/bin/activate
 
-    Now you should see a (venv) at the beginning of your terminal line. If you don't then make sure that you did these commands using command prompt and not powershell
+    Now you should see a (venv) at the beginning of your terminal line.
 
 
 5) Install the libraries using the command:
@@ -39,11 +39,11 @@ HOW TO INSTALL AND RUN THE PROJECT LOCALLY:
 
 6) Run the server using the command:
 
-        python main.py
+        python server.py
 
     If the server didn't run correctly, then try the following commands:
 
-        set FLASK_APP=main.py
+        set FLASK_APP=server.py
         flask run
 
 
@@ -51,12 +51,10 @@ HOW TO INSTALL AND RUN THE PROJECT LOCALLY:
 
     To compile:
 
-        javac FakeClient.java
-        java FakeClient
+        javac DrawingApp.java
+        java DrawingApp
 
-8) To test the current version (as of March 25, 2026) you will need to place a .png image in the same folder as the java script and type the name when it asks for it ex. "dog.png"
-
-9) If you install any external libraries in java or python, make sure you run this command before posting to github
+8) If you install any external libraries in java or python, make sure you run this command before posting to github
 
         pip freeze > requirements.txt
     
