@@ -1,0 +1,16 @@
+import javax.swing.*;
+import java.awt.*;
+/**A floating label that shows AI confidence near the cursor.
+ */
+public class PredictionOverlay extends JLabel {
+    public PredictionOverlay() {
+        setOpaque(true);
+        setBackground(new Color(0,0,0,150));
+        setForeground(Color.WHITE);
+        setVisible(false);
+    }    public void showTip(String text, Point p) {
+        setText(text);
+        setBounds(p.x + 10, p.y + 10, 150, 25);
+        setVisible(true);
+    }
+}
