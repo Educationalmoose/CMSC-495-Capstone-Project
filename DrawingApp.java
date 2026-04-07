@@ -48,11 +48,9 @@ public class DrawingApp extends JFrame {
                 BorderFactory.createLineBorder(new Color(218, 220, 224), 1),
                 new EmptyBorder(20, 20, 20, 20)
         ));        
-        mainPredictionLabel = new JLabel("<html><div style='text-align: center; color: #5f6368;'>Draw a shape 
-                                         below</div></html>", SwingConstants.CENTER);
+        mainPredictionLabel = new JLabel("<html><div style='text-align: center; color: #5f6368;'>Draw a shape below</div></html>", SwingConstants.CENTER);
         mainPredictionLabel.setFont(new Font("SansSerif", Font.BOLD, 22));
-        probabilityLabel = new JLabel("<html><div style='text-align: center; color: #80868b;'>Click the button to 
-                                      analyze</div></html>", SwingConstants.CENTER);
+        probabilityLabel = new JLabel("<html><div style='text-align: center; color: #80868b;'>Click the button to analyze</div></html>", SwingConstants.CENTER);
         probabilityLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));        
         resultsCard.add(mainPredictionLabel);
         resultsCard.add(probabilityLabel);
