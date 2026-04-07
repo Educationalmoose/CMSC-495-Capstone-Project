@@ -177,7 +177,8 @@ public class DrawingApp extends JFrame {
                 // make a new image with the same dimensions as the drawing canvas
                 int width = drawingCanvas.getWidth();
                 int height = drawingCanvas.getHeight();
-                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);                // draw the contents of the drawing canvas onto the image
+                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);                
+                // draw the contents of the drawing canvas onto the image
                 Graphics2D g2d = image.createGraphics();
                 drawingCanvas.paint(g2d);
                 g2d.dispose();                
