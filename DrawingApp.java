@@ -26,9 +26,15 @@ public class DrawingApp extends JFrame {
     private List<Integer> brushSizes = new ArrayList<>(); // Track size per stroke
     private List<Point> currentPath;
     private int currentBrushSize = 8;    
+
+    // Process allows us to boostrap the server onto the application, so users don't have to manually start it in the terminal
+    private static Process pythonServerProcess;
     private static final String SERVER_URL = "http://localhost:5000/predict";
+    
     // Maintain a square resolution for AI compatibility
-    private static final int CANVAS_SIZE = 400;     public DrawingApp() {
+    private static final int CANVAS_SIZE = 400;
+    
+    public DrawingApp() {
         setTitle("CMSC-495: AI Drawing Recognizer");
         setSize(500, 850);
         setResizable(false); // Lock the window so it is not resizable
@@ -134,7 +140,8 @@ public class DrawingApp extends JFrame {
             drawingCanvas.repaint();
             updateGhostPreview();
             resetUI();
-        });        undoButton.addActionListener(e -> {
+        });
+        undoButton.addActionListener(e -> {
             if (!shapes.isEmpty()) {
                 shapes.remove(shapes.size() - 1);
                 brushSizes.remove(brushSizes.size() - 1);
@@ -153,7 +160,11 @@ public class DrawingApp extends JFrame {
         ((JPanel)getContentPane()).setBorder(new EmptyBorder(15, 15, 15, 15));
         setLocationRelativeTo(null);
         updateGhostPreview();
-    }    
+
+        // start the server in a new thread so it doesn't block the UI from showing up
+        new Thread(() -> startPythonServer()).start();
+    } 
+    
     // New: Real-time Pre-processing "Ghost" Preview
     private void updateGhostPreview() {
         int w = Math.max(drawingCanvas.getWidth(), CANVAS_SIZE);
@@ -169,7 +180,8 @@ public class DrawingApp extends JFrame {
         gPreview.drawImage(scaled, 0, 0, null);
         gPreview.dispose();        
         previewLabel.setIcon(new ImageIcon(previewImg.getScaledInstance(56, 56, Image.SCALE_REPLICATE)));
-    }    
+    }
+    
     private void postImageToServer() {
         lockUI(true);
         new Thread(() -> {
@@ -200,7 +212,8 @@ public class DrawingApp extends JFrame {
                 lockUI(false);
             }
         }).start();
-    }    
+    } 
+    
     private void updateUIWithResults(String response) {
         SwingUtilities.invokeLater(() -> {
             // Simple logic to parse "message" from the JSON
@@ -218,19 +231,22 @@ public class DrawingApp extends JFrame {
             probabilityLabel.setText("Server processed drawing into 28x28 matrix.");
             resultsCard.setBackground(new Color(230, 244, 234));
         });
-    }    
+    }
+    
     private void updateUIWithError() {
         SwingUtilities.invokeLater(() -> {
             mainPredictionLabel.setText("<html><div style='color: #d93025;'>Connection Error</div></html>");
             probabilityLabel.setText("Check if your Python server is running.");
             resultsCard.setBackground(new Color(252, 232, 230));
         });
-    }    
+    }
+    
     private void resetUI() {
         mainPredictionLabel.setText("<html><div style='color: #5f6368;'>Draw a shape below</div></html>");
         probabilityLabel.setText("Click the button to analyze");
         resultsCard.setBackground(Color.WHITE);
-    }    
+    }
+    
     private void lockUI(boolean isLocked) {
         SwingUtilities.invokeLater(() -> {
             submitButton.setEnabled(!isLocked);
@@ -238,7 +254,62 @@ public class DrawingApp extends JFrame {
             undoButton.setEnabled(!isLocked);
             submitButton.setText(isLocked ? "Analyzing..." : "Analyze Drawing");
         });
-    }    
+    }
+
+    private void startPythonServer() {
+        try {
+            SwingUtilities.invokeLater(() -> {
+                lockUI(true);
+                mainPredictionLabel.setText("<html><div style='color: #f29900;'>Determining operating system...</div></html>");
+                probabilityLabel.setText("Please wait a moment...");
+            });
+            
+            // figure out which is being used OS to get to the python in venv
+            String os = System.getProperty("os.name").toLowerCase();
+
+            SwingUtilities.invokeLater(() -> {
+                mainPredictionLabel.setText("<html><div style='color: #f29900;'>Locating Python...</div></html>");
+            });
+
+            String pythonPath = os.contains("win") ? "venv\\Scripts\\python.exe" : "venv/bin/python";
+
+            SwingUtilities.invokeLater(() -> {
+                mainPredictionLabel.setText("<html><div style='color: #f29900;'>Initializing Server...</div></html>");
+            });
+
+            // build the terminal command
+            ProcessBuilder pb = new ProcessBuilder(pythonPath, "server.py");
+            
+            // merge Python's error messages with its normal output
+            pb.redirectErrorStream(true); 
+
+            // forward Python's terminal output to Java's terminal so we can read it
+            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); 
+
+            // launch the  terminal
+            pythonServerProcess = pb.start();
+
+            // kill the server when the user closes the Java window
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                if (pythonServerProcess != null) {
+                    pythonServerProcess.destroy();
+                }
+            }));
+
+            // wait 1.5 seconds for the server to finish setting up
+            Thread.sleep(2000); 
+
+            SwingUtilities.invokeLater(() -> {
+                resetUI();
+                lockUI(false);
+            });
+
+        } catch (Exception e) {
+            System.out.println("Failed to start the server: " + e.getMessage());
+            updateUIWithError();
+        }
+    }
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new DrawingApp().setVisible(true));
     }
