@@ -10,7 +10,7 @@ img_height = 180
 img_width = 180
 
 # alphabetical order that the folders of objects are in.
-class_names = ['Cat', 'Dog'] 
+class_names = ["Bird", "Car", "Cat", "Dog", "Face", "Flower", "Fruit", "Gun"] 
 
 # get the location of the drawing
 # test_image_path = "Dataset/Cat/0.jpg"
