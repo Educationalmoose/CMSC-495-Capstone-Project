@@ -105,7 +105,7 @@ public class DrawingApp extends JFrame {
                 updateGhostPreview(); // Ghost Preview (Real-Time Pre-processing)
             }
         });        
-        previewLabel = new JLabel("AI Input Preview (28x28)", SwingConstants.CENTER);
+        previewLabel = new JLabel("Scaled AI Input Preview (90x90)", SwingConstants.CENTER);
         previewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         previewLabel.setBorder(new EmptyBorder(10, 0, 10, 0));        
         centerPanel.add(drawingCanvas);
@@ -171,13 +171,13 @@ public class DrawingApp extends JFrame {
         Graphics2D g2 = img.createGraphics();
         drawingCanvas.paint(g2);
         g2.dispose();        
-        // Downsample to 28x28 grayscale
-        Image scaled = img.getScaledInstance(28, 28, Image.SCALE_SMOOTH);
-        BufferedImage previewImg = new BufferedImage(28, 28, BufferedImage.TYPE_BYTE_GRAY);
+        // Downsample to 90x90 grayscale
+        Image scaled = img.getScaledInstance(90, 90, Image.SCALE_SMOOTH);
+        BufferedImage previewImg = new BufferedImage(90, 90, BufferedImage.TYPE_BYTE_GRAY);
         Graphics2D gPreview = previewImg.createGraphics();
         gPreview.drawImage(scaled, 0, 0, null);
         gPreview.dispose();        
-        previewLabel.setIcon(new ImageIcon(previewImg.getScaledInstance(56, 56, Image.SCALE_REPLICATE)));
+        previewLabel.setIcon(new ImageIcon(previewImg.getScaledInstance(90, 90, Image.SCALE_REPLICATE)));
     }
     
     private void postImageToServer() {
@@ -226,7 +226,7 @@ public class DrawingApp extends JFrame {
                 message = "Done";
             }
             mainPredictionLabel.setText("<html><div style='color: #1a73e8;'>" + message + "</div></html>");
-            probabilityLabel.setText("Server processed drawing into 28x28 matrix.");
+            probabilityLabel.setText("Server processed drawing into 180x180 matrix.");
             resultsCard.setBackground(new Color(230, 244, 234));
         });
     }

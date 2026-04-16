@@ -14,7 +14,7 @@ def square_matrix():
         matrix = tf.io.decode_png(raw_bytes, channels=1)
 
         # resize the matrix to 28x28 pixels
-        matrix = tf.image.resize(matrix, [28, 28])
+        matrix = tf.image.resize(matrix, [180, 180])
 
         # normalize the pixel values to be between 0 and 1
         matrix = matrix / 255.0
