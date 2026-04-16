@@ -13,11 +13,11 @@ import kagglehub
 from kagglehub import KaggleDatasetAdapter
 
 # Download latest version
-kagglehub.dataset_download("moazeldsokyx/dogs-vs-cats")
-kagglehub.dataset_download("atulanandjha/lfwpeople")
-kagglehub.dataset_download("stealthtechnologies/birds-images-dataset")
-kagglehub.dataset_download("mohamedgobara/26-class-object-detection-dataset")
-kagglehub.dataset_download("rahmasleam/flowers-dataset")
+kagglehub.dataset_download("moazeldsokyx/dogs-vs-cats", output_dir="Dataset")
+kagglehub.dataset_download("atulanandjha/lfwpeople", output_dir="Dataset")
+kagglehub.dataset_download("stealthtechnologies/birds-images-dataset", output_dir="Dataset")
+kagglehub.dataset_download("mohamedgobara/26-class-object-detection-dataset", output_dir="Dataset")
+kagglehub.dataset_download("rahmasleam/flowers-dataset", output_dir="Dataset")
 
 
 print("Download complete")
