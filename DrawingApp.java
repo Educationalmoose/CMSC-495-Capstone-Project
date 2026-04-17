@@ -25,7 +25,7 @@ public class DrawingApp extends JFrame {
     private List<List<Point>> shapes = new ArrayList<>();
     private List<Integer> brushSizes = new ArrayList<>(); // Track size per stroke
     private List<Point> currentPath;
-    private int currentBrushSize = 8;    
+    private int currentBrushSize = 24;    
 
     // Process allows us to boostrap the server onto the application, so users don't have to manually start it in the terminal
     private static Process pythonServerProcess;
@@ -105,7 +105,7 @@ public class DrawingApp extends JFrame {
                 updateGhostPreview(); // Ghost Preview (Real-Time Pre-processing)
             }
         });        
-        previewLabel = new JLabel("Scaled AI Input Preview (56x56)", SwingConstants.CENTER);
+        previewLabel = new JLabel("Scaled AI Input Preview (28x28)", SwingConstants.CENTER);
         previewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         previewLabel.setBorder(new EmptyBorder(10, 0, 10, 0));        
         centerPanel.add(drawingCanvas);
@@ -119,7 +119,7 @@ public class DrawingApp extends JFrame {
         JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         sliderPanel.setOpaque(false);
         sliderPanel.add(new JLabel("Brush Size: "));
-        brushSlider = new JSlider(4, 32, 8);
+        brushSlider = new JSlider(16, 32, 24);
         brushSlider.addChangeListener(e -> currentBrushSize = brushSlider.getValue());
         sliderPanel.add(brushSlider);        
         submitButton = new JButton("Analyze Drawing");
@@ -163,7 +163,7 @@ public class DrawingApp extends JFrame {
         new Thread(() -> startPythonServer()).start();
     } 
     
-    // New: Real-time Pre-processing "Ghost" Preview
+    // Real-time pre-processing "Ghost" Preview
     private void updateGhostPreview() {
         int w = Math.max(drawingCanvas.getWidth(), CANVAS_SIZE);
         int h = Math.max(drawingCanvas.getHeight(), CANVAS_SIZE);        
@@ -171,7 +171,7 @@ public class DrawingApp extends JFrame {
         Graphics2D g2 = img.createGraphics();
         drawingCanvas.paint(g2);
         g2.dispose();        
-        // Downsample to 28x28 grayscale
+        // downsample to 28x28 grayscale
         Image scaled = img.getScaledInstance(28, 28, Image.SCALE_SMOOTH);
         BufferedImage previewImg = new BufferedImage(28, 28, BufferedImage.TYPE_BYTE_GRAY);
         Graphics2D gPreview = previewImg.createGraphics();
@@ -214,10 +214,15 @@ public class DrawingApp extends JFrame {
     
     private void updateUIWithResults(String response) {
         SwingUtilities.invokeLater(() -> {
-            // simple logic to parse the prediction from the JSON
+            // method to parse the prediction from the JSON
             String prediction = "Analysis Received";
             String confidence = "0";
+            String uncertainty = "100";
             String className = "Unknown";
+            
+            // map to store every single category and its score
+            java.util.Map<String, Double> allScores = new java.util.HashMap<>();
+            
             try {
                 // look for the class field in the JSON string
                 if (response.contains("\"class\": \"")) {
@@ -227,23 +232,71 @@ public class DrawingApp extends JFrame {
                 }
                 
                 // pull out the confidence percentage
-                if (response.contains("\"confidence\": ")) {
-                    int start = response.indexOf("\"confidence\": ") + 14;
-                    int end = response.indexOf("}", start);
-                    if (end == -1 || response.indexOf(",", start) < end && response.indexOf(",", start) != -1) {
-                        end = response.indexOf(",", start);
+                if (response.contains("\"confidence_percent\": ")) {
+                    int start = response.indexOf("\"confidence_percent\": ") + 22;
+                    int end = response.indexOf(",", start);
+                    if (end == -1 || (response.indexOf("\n", start) < end && response.indexOf("\n", start) != -1)) {
+                        end = response.indexOf("\n", start);
                     }
+                    if (end == -1) end = response.indexOf("}", start); 
+                    
                     confidence = response.substring(start, end).trim();
                 }
+
+                // pull out the uncertainty percentage
+                if (response.contains("\"uncertainty_percent\": ")) {
+                    int start = response.indexOf("\"uncertainty_percent\": ") + 23;
+                    int end = response.indexOf(",", start);
+                    if (end == -1 || (response.indexOf("\n", start) < end && response.indexOf("\n", start) != -1)) {
+                        end = response.indexOf("\n", start);
+                    }
+                    if (end == -1) end = response.indexOf("}", start);
+                    
+                    uncertainty = response.substring(start, end).trim();
+                }
+                
+                // pull out the entire all_scores_percent dictionary
+                if (response.contains("\"all_scores_percent\": {")) {
+                    int start = response.indexOf("\"all_scores_percent\": {") + 23;
+                    int end = response.indexOf("}", start);
+                    
+                    if (start != 22 && end != -1) { 
+                        String dictString = response.substring(start, end).trim();
+                        
+                        String[] pairs = dictString.split(",");
+                        for (String pair : pairs) {
+                            String[] keyValue = pair.split(":");
+                            if (keyValue.length == 2) {
+                                // strip whitespace
+                                String key = keyValue[0].replaceAll("\"", "").trim();
+                                // strip whitespace
+                                String valueStr = keyValue[1].trim();
+                                
+                                try {
+                                    allScores.put(key, Double.parseDouble(valueStr));
+                                } catch (NumberFormatException e) {
+                                }
+                            }
+                        }
+                    }
+                }
+                
             } catch (Exception e) {
                 prediction = "Done";
             }
 
+            // Print results
+            //System.out.println("All Non-Zero Predictions:");
+            //for (java.util.Map.Entry<String, Double> entry : allScores.entrySet()) {
+            //    if (entry.getValue() > 0.01)
+            //        System.out.println(entry.getKey() + " -> " + entry.getValue() + "%");
+            //}
+
             prediction = String.format("Did you draw a %s?", className);
             
-            // update the UI with the actual prediction string from Python
+            // update the UI with the actual prediction string and the new uncertainty score
             mainPredictionLabel.setText("<html><div style='text-align: center; color: #1a73e8;'>" + prediction + "</div></html>");
-            probabilityLabel.setText("AI Confidence: " + confidence + "%");
+            probabilityLabel.setText("<html>AI Confidence: " + confidence + "%<br>Uncertainty: " + uncertainty + "%</html>");
             resultsCard.setBackground(new Color(230, 244, 234));
         });
     }

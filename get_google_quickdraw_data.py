@@ -4,7 +4,7 @@ import os
 from PIL import Image
 
 # we can check the official list here: https://github.com/googlecreativelab/quickdraw-dataset/blob/master/categories.txt
-categories = ['apple', 'banana', 'baseball', 'bee', 'bird', 'butterfly', 'camera', 'car', 'cat', 'circle', 'clock', 'cloud', 'cookie', 'dog', 'donut', 'duck', 'envelope', 'eye', 'eyeglasses', 'face', 'fish', 'flower', 'foot', 'fork', 'frog', 'giraffe', 'grapes', 'guitar', 'hand', 'hat', 'horse', 'house', 'ice cream', 'leaf', 'leg', 'light bulb', 'lighthouse', 'lightning', 'lollipop', 'moon', 'mountain', 'octopus', 'palm tree', 'pants', 'peanut', 'scissors', 'shark', 'shoe', 'shovel', 'smiley face', 'snail', 'snowflake', 'snowman', 'square', 'star', 'strawberry', 'sun', 'sword', 'tooth', 'tree', 'triangle', 'windmill', 'wheel', 'windmill', ]
+categories = ['apple', 'banana', 'baseball', 'bee', 'bird', 'butterfly', 'camera', 'car', 'cat', 'circle', 'clock', 'cloud', 'cookie', 'dog', 'donut', 'duck', 'envelope', 'eye', 'eyeglasses', 'face', 'fish', 'flower', 'foot', 'fork', 'frog', 'giraffe', 'grapes', 'guitar', 'hand', 'hat', 'horse', 'house', 'ice cream', 'leaf', 'leg', 'light bulb', 'lighthouse', 'lightning', 'lollipop', 'moon', 'mountain', 'octopus', 'palm tree', 'pants', 'peanut', 'scissors', 'shark', 'shoe', 'shovel', 'smiley face', 'snail', 'snowflake', 'snowman', 'square', 'star', 'strawberry', 'sun', 'sword', 'tooth', 'tree', 'triangle', 'wheel', 'windmill']
 
 base_url = "https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap/"
 dataset_dir = "Dataset"
