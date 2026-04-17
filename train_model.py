@@ -6,8 +6,8 @@ from tensorflow.keras import layers
 data_dir = "Dataset" 
 
 batch_size = 32
-img_height = 180
-img_width = 180
+img_height = 28
+img_width = 28
 epochs = 15
 
 # load the training data set

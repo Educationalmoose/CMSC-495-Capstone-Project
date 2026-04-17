@@ -31,7 +31,7 @@ def predict_route():
 
         # process image in memory
         matrix = tf.io.decode_image(raw_bytes, channels=3) 
-        matrix = tf.image.resize(matrix, [180, 180])
+        matrix = tf.image.resize(matrix, [28, 28])
         final_input = tf.expand_dims(matrix, axis=0)
 
         # get prediction
