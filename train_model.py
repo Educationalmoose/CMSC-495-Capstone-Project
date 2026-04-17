@@ -10,6 +10,8 @@ img_height = 28
 img_width = 28
 epochs = 15
 
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+
 # load the training data set
 print("Loading training dataset...")
 train_ds = tf.keras.utils.image_dataset_from_directory(
@@ -17,6 +19,7 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
   validation_split=0.2,
   subset="training",
   seed=123,
+  color_mode="grayscale",
   image_size=(img_height, img_width),
   batch_size=batch_size)
 
@@ -27,6 +30,7 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
   validation_split=0.2,
   subset="validation",
   seed=123,
+  color_mode="grayscale",
   image_size=(img_height, img_width),
   batch_size=batch_size)
 
@@ -37,7 +41,7 @@ print(f"Classes found: {class_names}")
 num_classes = len(class_names)
 
 model = keras.Sequential([
-  keras.Input(shape=(img_height, img_width, 3)),
+  keras.Input(shape=(img_height, img_width, 1)),
   layers.Rescaling(1./255),
   
   layers.Conv2D(16, 3, padding='same', activation='relu'),
