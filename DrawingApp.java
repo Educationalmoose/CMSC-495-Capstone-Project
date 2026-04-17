@@ -214,19 +214,36 @@ public class DrawingApp extends JFrame {
     
     private void updateUIWithResults(String response) {
         SwingUtilities.invokeLater(() -> {
-            // Simple logic to parse "message" from the JSON
-            String message = "Analysis Received";
+            // simple logic to parse the prediction from the JSON
+            String prediction = "Analysis Received";
+            String confidence = "0";
+            String className = "Unknown";
             try {
-                if (response.contains("\"message\": \"")) {
-                    int start = response.indexOf("\"message\": \"") + 11;
+                // look for the class field in the JSON string
+                if (response.contains("\"class\": \"")) {
+                    int start = response.indexOf("\"class\": \"") + 10;
                     int end = response.indexOf("\"", start);
-                    message = response.substring(start, end);
+                    className = response.substring(start, end);
+                }
+                
+                // pull out the confidence percentage
+                if (response.contains("\"confidence\": ")) {
+                    int start = response.indexOf("\"confidence\": ") + 14;
+                    int end = response.indexOf("}", start);
+                    if (end == -1 || response.indexOf(",", start) < end && response.indexOf(",", start) != -1) {
+                        end = response.indexOf(",", start);
+                    }
+                    confidence = response.substring(start, end).trim();
                 }
             } catch (Exception e) {
-                message = "Done";
+                prediction = "Done";
             }
-            mainPredictionLabel.setText("<html><div style='color: #1a73e8;'>" + message + "</div></html>");
-            probabilityLabel.setText("Server processed drawing into 180x180 matrix.");
+
+            prediction = String.format("Did you draw a %s?", className);
+            
+            // update the UI with the actual prediction string from Python
+            mainPredictionLabel.setText("<html><div style='text-align: center; color: #1a73e8;'>" + prediction + "</div></html>");
+            probabilityLabel.setText("AI Confidence: " + confidence + "%");
             resultsCard.setBackground(new Color(230, 244, 234));
         });
     }

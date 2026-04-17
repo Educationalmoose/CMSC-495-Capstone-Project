@@ -1,48 +1,46 @@
 from flask import Flask, request, jsonify
 import tensorflow as tf
+import numpy as np
 
 app = Flask(__name__)
 
+# test in console using:
+# curl -X POST --data-binary "drawing_name.png" http://localhost:5000/predict
+
+# load the model once at the top so the server stays speedy
+MODEL = tf.keras.models.load_model("drawing_classifier.keras")
+CLASS_NAMES = ["Bird", "Car", "Cat", "Dog", "Face", "Flower", "Fruit", "Gun"]
+
+def get_prediction(input_tensor):
+    """Takes a pre-processed tensor and returns the prediction string and raw score."""
+
+    # call the prediction method
+    predictions = MODEL.predict(input_tensor)
+    score = tf.nn.softmax(predictions[0])
+    
+    class_name = CLASS_NAMES[np.argmax(score)]
+    confidence = 100 * np.max(score)
+    
+    return score, confidence
+
 @app.route('/predict', methods=['POST'])
-def square_matrix():
-    """Processes the incoming JSON data, performs matrix multiplication, and returns the result."""
+def predict_route():
     try: 
-        # catch the byte stream from the request
+        # catch the byte stream
         raw_bytes = request.get_data()
 
-        # convert the stream of bytes into a tensor and decode it as a PNG image, which will give us a 2D matrix with a single channel (grayscale)
-        matrix = tf.io.decode_png(raw_bytes, channels=1)
-
-        # resize the matrix to 28x28 pixels
+        # process image in memory
+        matrix = tf.io.decode_image(raw_bytes, channels=3) 
         matrix = tf.image.resize(matrix, [180, 180])
-
-        # normalize the pixel values to be between 0 and 1
-        matrix = matrix / 255.0
-
-        # expand the dimensions of the matrix to add a batch dimension, which is required for input into a neural network model
         final_input = tf.expand_dims(matrix, axis=0)
 
+        # get prediction
+        message, score = get_prediction(final_input)
 
-
-        # -------------------------------------------------------------------------
-        # prediction model analyzes the final_input tensor and outputs it's guesses
-        # -------------------------------------------------------------------------
-
-
-
-        # just for testing, we'll convert the tensor back to an image and save it to disk to verify that the input is being processed correctly
-        debug_image = tf.squeeze(final_input, axis=0) 
-        debug_image = debug_image * 255.0
-        debug_image = tf.cast(debug_image, tf.uint8)
-        new_png = tf.io.encode_png(debug_image)
-        tf.io.write_file('new_image.png', new_png)
-
-        # just for testing purposes, we'll perform matrix multiplication on the input tensor with itself and return the result
-        # return the result of matrix multiplication as a JSON response
         return jsonify({
                 "status": "success",
-                "message": "Matrix received and processed",
-                "new_matrix": str(final_input)
+                "class": CLASS_NAMES[np.argmax(score)],
+                "confidence": float(np.max(score))
             }), 200
     
     except Exception as e:
