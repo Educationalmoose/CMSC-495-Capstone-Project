@@ -1,9 +1,8 @@
 venv/
 __pycache__/
 Dataset/
-new_image.png
-new_image copy.png
 
+*.png
 *.class
-.keras
+
 .DS_Store

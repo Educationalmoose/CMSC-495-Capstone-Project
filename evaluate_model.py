@@ -35,8 +35,6 @@ true_labels = np.concatenate([y for x, y in test_ds], axis=0)
 
 success_rates = []
 avg_confidences = []
-min_confidences = []
-max_confidences = []
 
 print("Calculating statistics per category...")
 for i, class_name in enumerate(class_names):
@@ -53,8 +51,6 @@ for i, class_name in enumerate(class_names):
     true_class_confidences = class_scores[:, i]
     
     avg_confidences.append(np.mean(true_class_confidences))
-    min_confidences.append(np.min(true_class_confidences))
-    max_confidences.append(np.max(true_class_confidences))
 
 print("Generating graph...")
 
@@ -64,27 +60,23 @@ x_pos = np.arange(num_classes)
 
 plt.bar(x_pos, success_rates, width=0.6, color='skyblue', label='Success Rate (%)', alpha=0.8)
 
-lower_error = np.array(avg_confidences) - np.array(min_confidences)
-upper_error = np.array(max_confidences) - np.array(avg_confidences)
-variance_limits = [lower_error, upper_error]
 
 plt.errorbar(
     x_pos, 
     avg_confidences, 
-    yerr=variance_limits, 
     fmt='o', 
     color='darkorange', 
     ecolor='red', 
     elinewidth=2,
     capsize=4, 
-    label='Avg Confidence (with Min/Max Variance)'
+    label='Avg Confidence'
 )
 
 plt.xticks(x_pos, class_names, rotation=90, fontsize=10)
 plt.yticks(np.arange(0, 101, 10))
 plt.ylabel('Percentage (%)', fontsize=12)
 plt.xlabel('Categories', fontsize=12)
-plt.title('AI Evaluation: Success Rate & Confidence Spread per Category', fontsize=16, fontweight='bold')
+plt.title('AI Evaluation: Success Rate and Average Confidence', fontsize=16, fontweight='bold')
 plt.legend(loc='lower right', fontsize=12)
 plt.grid(axis='y', linestyle='--', alpha=0.6)
 

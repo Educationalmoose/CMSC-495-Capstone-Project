@@ -3,7 +3,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 
 
-data_dir = "Dataset" 
+data_dir = "Dataset/Training" 
 
 batch_size = 32
 img_height = 28
