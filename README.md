@@ -37,24 +37,14 @@ HOW TO INSTALL AND RUN THE PROJECT LOCALLY:
         pip install -r requirements.txt
 
 
-6) Run the server using the command:
-
-        python server.py
-
-    If the server didn't run correctly, then try the following commands:
-
-        set FLASK_APP=server.py
-        flask run
-
-
-7) To test the java demo, you can either compile the java file and run it in the console, or just use the run button inside the IDE.
+6) To test the java demo, you can either compile the java file and run it in the console, or just use the run button inside the IDE.
 
     To compile:
 
         javac DrawingApp.java
         java DrawingApp
 
-8) If you install any external libraries in java or python, make sure you run this command before posting to github
+7) If you install any external libraries in java or python, make sure you run this command before posting to github
 
         pip freeze > requirements.txt
     
